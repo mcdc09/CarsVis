@@ -67,7 +67,7 @@ var RadarChart = {
 				dataValues.push([
 					cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
 					cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
-				]);
+				]); // close dataValues.push
 			}); // close .data
 		
     		dataValues.push(dataValues[0]);
