@@ -3,7 +3,7 @@
 
 var RadarChart = {
 	draw:function(id, d, options) {
-		var details = {
+		var cfg = {
 			radius: 5,
      		w: 600,
      		h: 600,
@@ -15,7 +15,6 @@ var RadarChart = {
      		opacityArea: 0.5,
      		color: d3.scale.category10()
 		};
-		
 		if('undefined' !== typeof options){
       		for(var i in options){
         		if('undefined' !== typeof options[i]){
@@ -137,5 +136,7 @@ var RadarChart = {
 		});
     	//Tooltip
 		tooltip = g.append('text').style('opacity', 0).style('font-family', 'sans-serif').style('font-size', '13px');
+		
+		console.log("Drawn");
 	} // close draw
 }; // close RadarChart
