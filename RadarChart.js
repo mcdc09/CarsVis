@@ -5,12 +5,12 @@ var RadarChart = {
 	draw:function(id, d, options) {
 		var cfg = {
 			radius: 5,
-     		w: 600,
-     		h: 600,
+     		w: 800,
+     		h: 1000,
      		factor: 1,
     	 	factorLegend: .85,
      		levels: 3,
-     		maxValue: 5000,
+     		maxValue: 0,
      		radians: 2 * Math.PI,
      		opacityArea: 0.5,
      		color: d3.scale.category10()
