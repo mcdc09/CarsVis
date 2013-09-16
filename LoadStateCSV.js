@@ -1,4 +1,4 @@
-window.onload = function() {
+function loadStateData() {
 	
 	// Abbreviation,State,Population
 
@@ -9,17 +9,18 @@ window.onload = function() {
 		var d2 = [];
 		
 		for(var i = 1; i < data.length; i++) {
-			var population = checkValue(data[i][2]);
+			var pop = checkValue(data[i][2]);
 		
-			d2[i-1] = [
-				{axis: "Abbreviation", value: data[i][0]},
-				{axis: "State",			value: data[i][1]},
-				{axis: "Population",	value: population}
-				];
+			 d2[i-1] = [
+ 				{abbreviation: data[i][0]},
+ 				{state: data[i][1]},
+ 				{population: pop}
+ 				];
 		} // close for
 		
 		
 		// Draw Chart
+		console.log(d2[9][1].state);
 		
 	}); // close d3.text
 } // close function
