@@ -19,9 +19,14 @@
  				{state: data[i][1]},
  				{population: pop}
  				];
+ 				
+			console.log(d2[i-1]);			
 		} // close for
 		
 		
+		var minPop = findMin(d2);
+		var maxPop = findMax(d2);
+		console.log(minPop + "\t" + maxPop);
 		
 	}); // close d3.text
 	
@@ -54,6 +59,7 @@
 		  .attr("d", path)
 		  .on("click", clicked);
 
+		// Add in border
 	  g.append("path")
 		  .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
 		  .attr("id", "state-borders")
