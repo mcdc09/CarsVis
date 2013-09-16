@@ -27,9 +27,14 @@
 </style>
 <body>
 	<h1>Cars Data Visualization</h1>
+	<div style='width:100%;display:block;'>
+		<h2>CS 4460, Fall 2013
+		<br>Homework 6: Visualizations in d3</p>
+	</div>
 	
 	<div style='width:100%;display:block;'>
-		<h4>Chart modeled after: <a href='https://github.com/alangrafu/radar-chart-d3'>fd</a></h4>
+		<h4>Chart modeled using: <a href='http://bl.ocks.org/mbostock/2206590'>Mbostock's Click-to-Zoom Transform</a><br>
+		Map for United States taken from Mbostock <a href='http://bl.ocks.org/mbostock/raw/4090846/us.json'>here</a></h4>
 		<div id="chart" style='float:left'></div>
 
 	</div>
@@ -101,6 +106,15 @@ function findMax(table) {
 	return Array.max(array);
 } // close findMax
 
+function RainbowColor(value, minValue, maxValue)
+{
+	var i = ((value - minValue) * 255 / (maxValue - minValue));
+    var r = Math.round(Math.sin(0.024 * i + 0) * 127 + 128);
+    var g = Math.round(Math.sin(0.024 * i + 2) * 127 + 128);
+    var b = Math.round(Math.sin(0.024 * i + 4) * 127 + 128);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+} // close RainbowColor
+
 
 d3.json("us.json", function(error, us) {
   g.append("g")
@@ -151,3 +165,8 @@ function clicked(d) {
 }
 
 </script>
+	<div>
+		<p>Thomas Bowling: <a href='mailto:tbowling3@gatech.edu'>tBowling3@gatech.edu</a>
+		<br>Ian Rackley: <a href='mailto:irackley3@gatech.edu'>irackley3@gatech.edu</a></p>
+	</div>
+</body>
