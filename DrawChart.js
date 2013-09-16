@@ -2,12 +2,13 @@ window.onload = function() {
 	
 	//name,economy (mpg),cylinders,displacement (cc),power (hp),weight (lb),0-60 mph (s),year
 
-	var d2 = d3.text("cars.csv", function(unparsedData) {
-		var data = d3.csv.parseRows(unparsedData);
-		
+	d3.text("cars.csv", function(unparsedData) {
+	
+		// Reads in data from file
+		var data = d3.csv.parseRows(unparsedData);	
 		var d2 = [];
+		
 		for(var i = 1; i < data.length; i++) {
-		//for(var i = 1; i < 10; i++) {	
 			var economy = checkValue(data[i][1]);
 			var cylinders =checkValue(data[i][2]);
 			var displacement = checkValue(data[i][3]);
@@ -28,6 +29,8 @@ window.onload = function() {
 			   	];
 		} // close for
 		
+		
+		// Draw Chart
 		RadarChart.draw("#chart", d2);
 	}); // close d3.text
 } // close function
