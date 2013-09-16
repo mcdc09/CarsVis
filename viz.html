@@ -40,6 +40,9 @@
 	</div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script>
 
 var width = 960,
@@ -66,15 +69,15 @@ svg.append("rect")
 var g = svg.append("g");
 
 var table;
-var min;
-var max;
+var minimumPopulation;
+var maximumPopulation;
 var populationRange;
 d3.csv("StateData.csv", function(loadedRows){
   table = loadedRows
   
-   min = findMin(table);
-   max = findMax(table);
-   populationRange = max - min;
+   minimumPopulation = findMin(table);
+   maximumPopulation = findMax(table);
+   populationRange = maximumPopulation - minimumPopulation;
 });
 
 function findMin(table) {
@@ -136,6 +139,21 @@ d3.json("us.json", function(error, us) {
 
 d3.select("body").append("div").attr("id","tooltip").text("Selected State: N/A State Rank: N/A  Filter Rank: N/A")
 
+// Slider
+$(function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: minimumPopulation,
+      max: maximumPopulation,
+      values: [minimumPopulation, maximumPopulation ],
+      slide: function( event, ui ) {
+        $( "#popRange" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+      }
+    });
+    $( "#popRange" ).val($( "#slider-range" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+  });
+
 function clicked(d) {
   var x, y, k;
 
@@ -165,8 +183,20 @@ function clicked(d) {
 }
 
 </script>
-	<div>
-		<p>Thomas Bowling: <a href='mailto:tbowling3@gatech.edu'>tBowling3@gatech.edu</a>
-		<br>Ian Rackley: <a href='mailto:irackley3@gatech.edu'>irackley3@gatech.edu</a></p>
-	</div>
+
+
+<div>
+	<p>
+		<label for="popRange">Population Range:</label>
+		<input type="text" id="popRange" style="border: 0; color: #f6931f; font-weight: bold;" />
+	</p>
+</div>
+<div id="slider-range" style='width:25%'></div>
+
+
+<div>
+	<p>Thomas Bowling: <a href='mailto:tbowling3@gatech.edu'>tBowling3@gatech.edu</a>
+	<br>Ian Rackley: <a href='mailto:irackley3@gatech.edu'>irackley3@gatech.edu</a></p>
+</div>
 </body>
+</html>
