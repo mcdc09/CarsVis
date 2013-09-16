@@ -60,8 +60,49 @@ svg.append("rect")
 
 var g = svg.append("g");
 
+var table;
+var min;
+var max;
+var populationRange;
+d3.csv("StateData.csv", function(loadedRows){
+  table = loadedRows
+  
+   min = findMin(table);
+   max = findMax(table);
+   populationRange = max - min;
+});
+
+function findMin(table) {
+	var array = [];
+	for(var i = 0; i < table.length; i++) {
+		array[i] = table[i].Population;
+	} // close for
+	
+	Array.min = function( array ){
+    	return Math.min.apply( Math, array );
+	};
+	
+	
+	var minimum = Array.min(array);
+	return minimum;
+} // close findMin
+
+function findMax(table) {
+	var array = [];
+	
+	for(var i = 0; i < table.length; i++) {
+		array[i] = table[i].Population;
+	} // close for
+	
+	Array.max = function( array ){
+    	return Math.max.apply( Math, array );
+	};
+
+	return Array.max(array);
+} // close findMax
+
+
 d3.json("us.json", function(error, us) {
-  console.log(us)
   g.append("g")
       .attr("id", "states")
     .selectAll("path")
@@ -76,10 +117,7 @@ d3.json("us.json", function(error, us) {
       .attr("id", "state-borders")
       .attr("d", path);
 });
-var table
-d3.csv("StateData.csv", function(loadedRows){
-  table = loadedRows
-});
+
 
 
 d3.select("body").append("div").attr("id","tooltip").text("Selected State: N/A State Rank: N/A  Filter Rank: N/A")
