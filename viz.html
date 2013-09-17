@@ -175,7 +175,8 @@ function clicked(d) {
     y = centroid[1];
     k = 4;
     centered = d;
-    d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " + "Filter Rank: ")
+    d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " +
+    getRank(sortedTable,table[d.id-1].State) +   " Filter Rank: ")
 
   } else {
     x = width / 2;
@@ -213,6 +214,28 @@ function filter(minVal,maxVal){
         }
       }
   });
+}
+function getRank(t,l){
+  for(j = t.length;j>0;j--){
+    if(sortedTable[j-1].State == l ){
+      return t.length+1-j;
+    }
+  }
+}
+function getFilteredRank(){
+  var temp;
+  for(j=t.length;j>0;j--){
+      if(sortedTable[j-1].Population > max){
+        temp++;
+      }
+      if(sortedTable[j-1].State == l){
+          if(sortedTable[j-1].Population > max || sortedTable[j-1].Population < min){
+            return "N/A"
+          }else{
+            return t.length+1-j-temp;
+          }
+      }
+  }
 }
 function getIndexOf(t, l){
   for(j = 0; j < table.length; j++){
