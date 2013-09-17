@@ -74,6 +74,8 @@ var g = svg.append("g");
 var table;
 var minimumPopulation;
 var maximumPopulation;
+var maxPopulationInRange;
+var minPopulationInRange;
 var populationRange;
 var filterTable;
 var sortedTable;
@@ -81,6 +83,8 @@ d3.csv("StateData.csv", function(loadedRows){
   table = loadedRows
    minimumPopulation = findMin(table);
    maximumPopulation = findMax(table);
+   maxPopulationInRange = maximumPopulation;
+   minPopulationInRange = minimumPopulation;
    populationRange = maximumPopulation - minimumPopulation;
    
 });
@@ -199,7 +203,9 @@ function clicked(d) {
       .style("stroke-width", 1.5 / k + "px");
 }
 function filter(minVal,maxVal){
-  console.log("MIN FILTER " + minVal + " MAX FILTER " + maxVal )
+  console.log("MIN FILTER " + minVal + " MAX FILTER " + maxVal )  
+	minPopulationInRange = minVal
+	maxPopulationInRange = maxVal;
   $(".states").addClass("filtered");
   $(".states").each(function(index){
       if(index < 50){
