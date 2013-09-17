@@ -79,13 +79,12 @@ var minPopulationInRange;
 var populationRange;
 var filterTable;
 var sortedTable;
+var filterMax;
+var filterMin;
 d3.csv("StateData.csv", function(loadedRows){
   table = loadedRows
    minimumPopulation = findMin(table);
    maximumPopulation = findMax(table);
-   maxPopulationInRange = maximumPopulation;
-   minPopulationInRange = minimumPopulation;
-   populationRange = maximumPopulation - minimumPopulation;
    
 });
 d3.csv("StateData.csv",function(loadedRows){
@@ -124,12 +123,41 @@ function findMax(table) {
 	return Array.max(array);
 } // close findMax
 
+function interp(x1, y1, x2, y2, x) {
+		return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+}
+
 function RainbowColor(value, minValue, maxValue)
 {
-	var i = ((value - minValue) * 255 / (maxValue - minValue));
-    var r = Math.round(Math.sin(0.024 * i + 0) * 127 + 128);
-    var g = Math.round(Math.sin(0.024 * i + 2) * 127 + 128);
-    var b = Math.round(Math.sin(0.024 * i + 4) * 127 + 128);
+	// Creates a jet colormap with resolution of 64
+	var i = (((value-minValue) * 64) / (maxValue - minValue));
+	var r = 0, g = 0, b = 0;
+	if(i <= 8) { // ONE
+		r = 0;
+		g = 0;
+		b = interp(1, 143, 8, 255, i);
+	} else if(8 < i && i <= 24) { // TWO
+		r = 0;
+		g = interp(8, 0, 24, 255, i);
+		b = 255;
+	} else if(24 < i && i <= 40) { // THREE
+		r = interp(24, 0, 40, 255, i);
+		g = 255;
+		b = interp(24, 255, 40, 0, i);
+	} else if(40 < i && i <= 56) { // FOUR
+		r = 255;
+		g = interp(40, 255, 56, 0, i);
+		b = 0;
+	} else if(56 < i && i <= 64) { // FIVE
+		r = interp(56, 255, 64, 128, i);
+		g = 0;
+		b = 0;
+	} // close else if
+	
+	r = Math.round(r);
+	g = Math.round(g);
+	b = Math.round(b);
+	//console.log("Value: " + value + "    minValue: " + minValue + "   maxValue: " + maxValue + "   r:" + r + "  g: " + g + "  b: " + b);
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 } // close RainbowColor
 
@@ -148,6 +176,7 @@ d3.json("us.json", function(error, us) {
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("id", "state-borders")
       .attr("d", path);
+      
 });
 
 
@@ -179,8 +208,14 @@ function clicked(d) {
     y = centroid[1];
     k = 4;
     centered = d;
-    d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " +
-    getRank(sortedTable,table[d.id-1].State) +   " Filter Rank: ")
+     var tempVarThing;
+    if(getFilteredRank(sortedTable,table[d.id-1].State)==-1){
+      d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " +
+    getRank(sortedTable,table[d.id-1].State) +   " Filter Rank: " + "N/A");
+    }else{
+      d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " +
+    getRank(sortedTable,table[d.id-1].State) +   " Filter Rank: " + getFilteredRank(sortedTable,table[d.id-1].State));
+    }
 
   } else {
     x = width / 2;
@@ -203,20 +238,23 @@ function clicked(d) {
       .style("stroke-width", 1.5 / k + "px");
 }
 function filter(minVal,maxVal){
-  console.log("MIN FILTER " + minVal + " MAX FILTER " + maxVal )  
-	minPopulationInRange = minVal
-	maxPopulationInRange = maxVal;
+  console.log("MIN FILTER " + minVal + " MAX FILTER " + maxVal )
+  filterMin = minVal;
+  filterMax = maxVal;
   $(".states").addClass("filtered");
   $(".states").each(function(index){
       if(index < 50){
         if(table[index].Population>=minVal && table[index].Population<=maxVal){
-          $(this).removeAttr("class");
-          $(this).attr("class","states filtered");
+          //$(this).removeAttr("class");
+          //$(this).attr("class","states filtered");
+          //console.log(RainbowColor(table[index].Population,minVal,maxVal))
+          $(this).css('fill',RainbowColor(table[index].Population,minVal,maxVal))
         }else{
-          $(this).removeAttr("class");
-          $(this).attr("class","states");
-          console.log(sortedTable[index].State)
-          console.log(index)
+          $(this).css('fill','black');
+          //$(this).removeAttr("class");
+          //$(this).attr("class","states");
+          //console.log(sortedTable[index].State)
+          //console.log(index)
         }
       }
   });
@@ -228,16 +266,23 @@ function getRank(t,l){
     }
   }
 }
-function getFilteredRank(){
-  var temp;
+function getFilteredRank(t,l){
+  var temp=0;
   for(j=t.length;j>0;j--){
-      if(sortedTable[j-1].Population > max){
+      if(sortedTable[j-1].Population > filterMax){
         temp++;
       }
       if(sortedTable[j-1].State == l){
-          if(sortedTable[j-1].Population > max || sortedTable[j-1].Population < min){
-            return "N/A"
+        console.log("I HERE")
+          if(sortedTable[j-1].Population > filterMax || sortedTable[j-1].Population < filterMin){
+            //return "N/A";
+            console.log("I AM NOW HERE")
+            return -1;
           }else{
+            console.log("I AM NOW HERE INSTEAD" )
+            console.log(t.length)
+            console.log(j)
+            console.log(temp)
             return t.length+1-j-temp;
           }
       }
@@ -251,6 +296,9 @@ function getIndexOf(t, l){
   }
 }
 
+$(".states").each(function(index){
+		$(this).css("fill", RainbowColor(table[index].Population, minPopulationInRange, maxPopulationInRange));
+});
 </script>
 
 
