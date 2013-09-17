@@ -8,7 +8,7 @@
 }
 
 .states {
-  fill: #FF5800;
+  fill: black;
 }
 path.filtered{
   fill:orange;
@@ -51,7 +51,9 @@ path.active {
 var width = 960,
     height = 500,
     centered;
-
+/*
+lines 54 - 74 include extremely simple setup code for displaying the map, gained from the original project
+*/
 var projection = d3.geo.albersUsa()
     .scale(1070)
     .translate([width / 2, height / 2]);
@@ -81,6 +83,7 @@ var filterTable;
 var sortedTable;
 var filterMax;
 var filterMin;
+var tempColor;
 d3.csv("StateData.csv", function(loadedRows){
   table = loadedRows
    minimumPopulation = findMin(table);
@@ -161,7 +164,9 @@ function RainbowColor(value, minValue, maxValue)
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 } // close RainbowColor
 
-
+/*
+Lines 169 through 184 contains edited code from the original open source project. Now each path has its own "states" class rather than just the "states" id on the overall surrounding html tag. The reason for this is described in the readme. 
+*/
 d3.json("us.json", function(error, us) {
   g.append("g")
       .attr("id", "states")
@@ -199,6 +204,9 @@ $(function() {
       " - " + $( "#slider-range" ).slider( "values", 1 ) );
   });
 
+/*
+The following function originated from the borrowed code, but was edited heavily to include tooltip functionality. Specifically, lines 220-226 and 233 are all brand new tooltip functionality, while the others have had their style effects disabled. 
+*/
 function clicked(d) {
   var x, y, k;
 
@@ -208,7 +216,6 @@ function clicked(d) {
     y = centroid[1];
     k = 4;
     centered = d;
-     var tempVarThing;
     if(getFilteredRank(sortedTable,table[d.id-1].State)==-1){
       d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " +
     getRank(sortedTable,table[d.id-1].State) +   " Filter Rank: " + "N/A");
@@ -227,18 +234,14 @@ function clicked(d) {
 
   g.selectAll("path")
       .classed("active", centered && function(d) { return d === centered; });
-  var temp = g.selectAll("path")
-  for(sal = 0; sal < temp.length; sal++){
-    //console.log(temp[sal]);
-  }
 
+//The mouseclick transition was left in
   g.transition()
       .duration(750)
       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
       .style("stroke-width", 1.5 / k + "px");
 }
 function filter(minVal,maxVal){
-  console.log("MIN FILTER " + minVal + " MAX FILTER " + maxVal )
   filterMin = minVal;
   filterMax = maxVal;
   $(".states").addClass("filtered");
@@ -273,16 +276,10 @@ function getFilteredRank(t,l){
         temp++;
       }
       if(sortedTable[j-1].State == l){
-        console.log("I HERE")
           if(sortedTable[j-1].Population > filterMax || sortedTable[j-1].Population < filterMin){
             //return "N/A";
-            console.log("I AM NOW HERE")
             return -1;
           }else{
-            console.log("I AM NOW HERE INSTEAD" )
-            console.log(t.length)
-            console.log(j)
-            console.log(temp)
             return t.length+1-j-temp;
           }
       }
