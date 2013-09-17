@@ -8,10 +8,13 @@
 }
 
 .states {
-  fill: #aaa;
+  fill: #FF5800;
+}
+path.filtered{
+  fill:orange;
 }
 
-.active {
+path.active {
   fill: yellow;
 }
 
@@ -86,8 +89,6 @@ d3.csv("StateData.csv",function(loadedRows){
   sortedTable.sort(function(a,b){
     return a.Population - b.Population;
   });
-  console.log(sortedTable[0])
-  console.log(sortedTable[1])
 });
 
 function findMin(table) {
@@ -170,14 +171,11 @@ function clicked(d) {
 
   if (d && centered !== d) {
     var centroid = path.centroid(d);
-    console.log(d)
     x = centroid[0];
     y = centroid[1];
     k = 4;
     centered = d;
     d3.select("div#tooltip").text("Selected State: " + table[d.id-1].State + " State Population: "+ table[d.id-1].Population+  " State Rank: " + "Filter Rank: ")
-    l[0].State = "BOOP"
-console.log(table[0])
 
   } else {
     x = width / 2;
@@ -189,6 +187,10 @@ console.log(table[0])
 
   g.selectAll("path")
       .classed("active", centered && function(d) { return d === centered; });
+  var temp = g.selectAll("path")
+  for(sal = 0; sal < temp.length; sal++){
+    //console.log(temp[sal]);
+  }
 
   g.transition()
       .duration(750)
@@ -197,6 +199,27 @@ console.log(table[0])
 }
 function filter(minVal,maxVal){
   console.log("MIN FILTER " + minVal + " MAX FILTER " + maxVal )
+  $(".states").addClass("filtered");
+  $(".states").each(function(index){
+      if(index < 50){
+        if(table[index].Population>=minVal && table[index].Population<=maxVal){
+          $(this).removeAttr("class");
+          $(this).attr("class","states filtered");
+        }else{
+          $(this).removeAttr("class");
+          $(this).attr("class","states");
+          console.log(sortedTable[index].State)
+          console.log(index)
+        }
+      }
+  });
+}
+function getIndexOf(t, l){
+  for(j = 0; j < table.length; j++){
+    if(t[j].State == l.State){
+      return j;
+    }
+  }
 }
 
 </script>
